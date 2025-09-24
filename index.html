@@ -4,80 +4,92 @@
 <head>
   <meta name=viewport content="width=800">
   <meta name="generator" content="HTML Tidy for Linux/x86 (vers 11 February 2007), see www.w3.org">
-  <style type="text/css">
-    /* Color scheme stolen from Sergey Karayev */
-
-    a {
-      color: #1772d0;
-      text-decoration: none;
+ <style>
+  /* === THEME TOKENS === */
+  :root {
+    --bg: #ffffff;
+    --text: #1a1a1a;
+    --muted: #555;
+    --link: #1772d0;
+    --link-hover: #f09220;
+    --highlight: #ffffd0;
+    --card: #ffffff;
+    --border: #e6e6e6;
+  }
+  /* Default to system dark if user hasn't chosen yet (JS can override) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1115;
+      --text: #e6e6e6;
+      --muted: #b7b7b7;
+      --link: #70a7ff;
+      --link-hover: #f2a85a;
+      --highlight: #2b2a1a;
+      --card: #161923;
+      --border: #2a2f3a;
     }
+  }
+  /* Explicit dark mode when data-theme="dark" is set on <html> */
+  :root[data-theme="dark"] {
+    --bg: #0f1115;
+    --text: #e6e6e6;
+    --muted: #b7b7b7;
+    --link: #70a7ff;
+    --link-hover: #f2a85a;
+    --highlight: #2b2a1a;
+    --card: #161923;
+    --border: #2a2f3a;
+  }
+  /* Explicit light mode when data-theme="light" is set on <html> */
+  :root[data-theme="light"] {
+    --bg: #ffffff;
+    --text: #1a1a1a;
+    --muted: #555;
+    --link: #1772d0;
+    --link-hover: #f09220;
+    --highlight: #ffffd0;
+    --card: #ffffff;
+    --border: #e6e6e6;
+  }
 
-    a:focus,
-    a:hover {
-      color: #f09220;
-      text-decoration: none;
-    }
+  /* === EXISTING STYLES, now using tokens === */
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+  }
+  a { color: var(--link); text-decoration: none; }
+  a:focus, a:hover { color: var(--link-hover); text-decoration: none; }
 
-    body,
-    td,
-    th,
-    tr,
-    p,
-    a {
-      font-family: 'Titillium Web', Verdana, Helvetica, sans-serif;
-      font-size: 16px;
-      font-weight: 400
-    }
+  body, td, th, tr, p, a,
+  strong, heading, papertitle, name {
+    font-family: 'Titillium Web', Verdana, Helvetica, sans-serif;
+    font-size: 16px; font-weight: 400;
+    color: var(--text);
+  }
+  strong, papertitle, heading { font-weight: 600; }
+  heading { font-size: 17px; display:inline-block; }
+  name { font-size: 32px; display:inline-block; }
 
-    strong {
-      font-family: 'Titillium Web', Verdana, Helvetica, sans-serif;
-      font-size: 16px;
-      font-weight: 600
-    }
+  /* Tables/cards */
+  table { background: var(--card); }
+  td, th { border-color: var(--border); }
 
-    heading {
-      font-family: 'Titillium Web', Verdana, Helvetica, sans-serif;
-      font-size: 17px;
-      font-weight: 600
-    }
+  /* Your highlight helpers */
+  span.highlight { background-color: var(--highlight); }
+  tr[bgcolor] { background: var(--highlight) !important; } /* override inline */
 
-    papertitle {
-      font-family: 'Titillium Web', Verdana, Helvetica, sans-serif;
-      font-size: 16px;
-      font-weight: 600
-    }
+  /* Images keep their colors; remove filters if you added any */
+  img { display:block; }
 
-    name {
-      font-family: 'Titillium Web', Verdana, Helvetica, sans-serif;
-      font-size: 32px;
-      font-weight: 400
-    }
+  /* Theme toggle button (top-right) */
+  #theme-toggle {
+    position: fixed; right: 16px; top: 16px; z-index: 9999;
+    background: var(--card); color: var(--text);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 8px 12px; cursor: pointer; font: inherit;
+  }
+</style>
 
-    .one {
-      width: 160px;
-      height: 160px;
-      position: relative;
-    }
-
-    .two {
-      width: 160px;
-      height: 160px;
-      position: absolute;
-      transition: opacity .2s ease-in-out;
-      -moz-transition: opacity .2s ease-in-out;
-      -webkit-transition: opacity .2s ease-in-out;
-    }
-
-    .fade {
-      transition: opacity .2s ease-in-out;
-      -moz-transition: opacity .2s ease-in-out;
-      -webkit-transition: opacity .2s ease-in-out;
-    }
-
-    span.highlight {
-      background-color: #ffffd0;
-    }
-  </style>
   <link rel="icon" type="image/png" href="images/MLSys Icon.png">
   <script type="text/javascript" src="js/hidebib.js"></script>
   <title>Benjamin R. Redhead</title>
@@ -97,7 +109,43 @@
   <link href="https://fonts.googleapis.com/css?family=Titillium+Web:400,600,400italic,600italic,300,300italic" rel="stylesheet" type="text/css">
 </head>
 
+<script>
+  (function () {
+    const root = document.documentElement;
+    const btn = document.getElementById('theme-toggle');
+
+    function setTheme(mode) {
+      if (mode) {
+        root.setAttribute('data-theme', mode);       // "light" or "dark"
+        localStorage.setItem('theme', mode);
+      } else {
+        root.removeAttribute('data-theme');          // fall back to system
+        localStorage.removeItem('theme');
+      }
+      btn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+      btn.setAttribute('aria-pressed', root.getAttribute('data-theme') === 'dark');
+    }
+
+    // Initialize: use saved theme or system preference
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') {
+      setTheme(saved);
+    } else {
+      // No saved choice; reflect system and show correct icon
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(prefersDark ? 'dark' : 'light');
+      // If you want “system auto” when no saved choice, comment the two lines above and call setTheme(null)
+    }
+
+    btn.addEventListener('click', () => {
+      const current = root.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  })();
+</script>
+
 <body>
+  <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
   <table width="900" border="0" align="center" cellspacing="0" cellpadding="0">
     <tr>
       <td>
