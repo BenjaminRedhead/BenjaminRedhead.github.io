@@ -11,23 +11,23 @@
       --bg: #ffffff;
       --text: #1a1a1a;
       --muted: #555;
-      --link: #1772d0;
-      --link-hover: #f09220;
-      --highlight: #ffffd0;
+      --link: #731bc3;       /* custom light link */
+      --link-hover: #500b8f;
+      --highlight: #731bc3;  /* custom highlight */
       --card: #ffffff;
       --border: #e6e6e6;
       --radius: 12px;
       --shadow: 0 2px 12px rgba(0,0,0,.06);
-      --fade: .9s; /* ripple duration (slower -> larger value) */
+      --fade: 1s; /* ripple duration */
     }
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #0f1115;
         --text: #e6e6e6;
         --muted: #b7b7b7;
-        --link: #70a7ff;
-        --link-hover: #f2a85a;
-        --highlight: #2b2a1a;
+        --link: #31f3ff;      /* custom dark link */
+        --link-hover: #5befff;
+        --highlight: #31f3ff; /* custom highlight */
         --card: #161923;
         --border: #2a2f3a;
         --shadow: 0 2px 12px rgba(0,0,0,.35);
@@ -37,9 +37,9 @@
       --bg: #0f1115;
       --text: #e6e6e6;
       --muted: #b7b7b7;
-      --link: #70a7ff;
-      --link-hover: #f2a85a;
-      --highlight: #2b2a1a;
+      --link: #31f3ff;
+      --link-hover: #5befff;
+      --highlight: #31f3ff;
       --card: #161923;
       --border: #2a2f3a;
       --shadow: 0 2px 12px rgba(0,0,0,.35);
@@ -48,9 +48,9 @@
       --bg: #ffffff;
       --text: #1a1a1a;
       --muted: #555;
-      --link: #1772d0;
-      --link-hover: #f09220;
-      --highlight: #ffffd0;
+      --link: #731bc3;
+      --link-hover: #500b8f;
+      --highlight: #731bc3;
       --card: #ffffff;
       --border: #e6e6e6;
       --shadow: 0 2px 12px rgba(0,0,0,.06);
@@ -70,7 +70,6 @@
     heading { font-size: 17px; display: inline-block; }
     name { display: inline-block; font-weight: 400; font-size: clamp(26px, 4vw, 36px); }
 
-    /* Subtle transitions for color changes (not the ripple) */
     html, body, .section, .container, .hero, a, #theme-toggle {
       transition: background-color .25s ease, color .25s ease, border-color .25s ease;
     }
@@ -88,7 +87,6 @@
       overflow: hidden;
     }
 
-    /* Hero band for desktop/tablet only */
     .hero-band {
       background: var(--card);
       border-top: 1px solid var(--border);
@@ -106,29 +104,20 @@
     }
     @media (max-width: 720px) { .hero-band { background: transparent; border: none; padding-block: 0; } }
 
-    /* Tables still fine */
-    table { width: 100%; background: var(--card); border-collapse: separate; border-spacing: 0; }
-    td, th { border-color: var(--border); }
-
-    /* HERO GRID */
     .hero {
       display: grid;
       grid-template-columns: 2fr 1fr;
       gap: 24px;
-      align-items: center;      /* center vertically on desktop */
+      align-items: center;
     }
-    .photo-wrap {
-      display: flex;
-      justify-content: center;
-      align-self: center;       /* ensure the image column centers too */
-    }
+    .photo-wrap { display: flex; justify-content: center; align-self: center; }
     .profile-pic {
       max-width: 380px; width: 100%; height: auto;
       border-radius: var(--radius); box-shadow: var(--shadow);
     }
     @media (max-width: 900px) { .profile-pic { max-width: 320px; } }
     @media (max-width: 720px) {
-      .hero { grid-template-columns: 1fr; align-items: start; } /* revert for phones */
+      .hero { grid-template-columns: 1fr; align-items: start; }
       .center-sm { text-align: center; }
       .links a { display: inline-block; margin: 4px 6px; }
       .profile-pic { max-width: 420px; }
@@ -138,9 +127,8 @@
     .muted { color: var(--muted); }
     span.highlight { background-color: var(--highlight); }
     tr[bgcolor] { background: var(--highlight) !important; }
-    img { max-width: 100%; height: auto; display: block; }
 
-    /* Toggle button + icon cross-fade; respect notches */
+    /* Toggle button */
     #theme-toggle{
       position: fixed;
       right: calc(12px + env(safe-area-inset-right));
@@ -164,40 +152,22 @@
     :root[data-theme="dark"]  #theme-toggle .icon-sun  { opacity: 1; transform: scale(1); }
     :root[data-theme="dark"]  #theme-toggle .icon-moon { opacity: 0; transform: scale(.85); }
 
-    /* === RIPPLE OVERLAY for corner spread effect ===
-       Starts covering the whole page with the OLD theme color,
-       then shrinks to the toggle corner, revealing the NEW theme. */
+    /* Ripple overlay */
     #theme-fader{
       position: fixed; inset: 0;
-      background: var(--bg); /* set inline via JS to OLD theme color before switching */
+      background: var(--bg);
       pointer-events: none;
       z-index: 10000;
-      opacity: 1; /* we animate via clip-path, not opacity */
-      clip-path: circle(0 at 100% 0); /* fallback */
-      transition: clip-path var(--fade) ease;
+      clip-path: circle(0 at 100% 0);
     }
   </style>
-
-  <link rel="icon" type="image/png" href="images/MLSys Icon.png">
-  <link href="https://fonts.googleapis.com/css?family=Titillium+Web:400,600,400italic,600italic,300,300italic" rel="stylesheet" type="text/css">
-
-  <!-- Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZYJGJ1XX4C"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-ZYJGJ1XX4C');
-  </script>
 </head>
 
 <body>
-  <!-- Dark mode toggle -->
   <button id="theme-toggle" type="button" aria-label="Toggle dark mode">
     <span class="icon-moon" aria-hidden="true">🌙</span>
     <span class="icon-sun"  aria-hidden="true">☀️</span>
   </button>
-  <!-- Ripple overlay -->
   <div id="theme-fader" aria-hidden="true"></div>
 
   <!-- HERO BAND -->
@@ -206,37 +176,25 @@
       <div class="hero">
         <div>
           <p class="center-sm"><name>Benjamin R. Redhead</name></p>
-
-          <p>
-            I am a first year PhD student at the
+          <p>I am a first year PhD student at the
             <a target="_blank" href="https://informatics.ed.ac.uk/cdt-in-machine-learning-systems">EPSRC CDT Machine Learning Systems</a>
             in the School of Informatics, University of Edinburgh, advised by Prof. Amos Storkey. My research is jointly funded via the EPSRC grant no. EP/Y03516X/1 and the University of Edinburgh.
           </p>
-
-          <p>
-            My research interest is in the field of foundation models for time-series forecasting, specifically with regards to adaptability to domain shift, edge forecasting, and data privacy. I have a particular interest in leveraging continual and federated learning for urban forecasting systems. While my research is primarily grounded in time-series, the methods I explore aim to inform broader seq2seq foundation model research.
+          <p>My research interest is in the field of foundation models for time-series forecasting, specifically with regards to adaptability to domain shift, edge forecasting, and data privacy. I have a particular interest in leveraging continual and federated learning for urban forecasting systems. While my research is primarily grounded in time-series, the methods I explore aim to inform broader seq2seq foundation model research.
           </p>
-
-          <p>
-            Prior to my time at the University of Edinburgh, I conducted my Masters in Science studies in Computer Software and Theory under the supervision of Prof. Zhi Jin at
-            <a target="_blank" href="https://cs.pku.edu.cn/English/Home.htm">Peking University</a>. During this time, I worked primarily on a heterogeneous mixture-of-experts approach to robust time-series forecasting, which formed the basis of my master’s thesis as well as presenting this as a guest speaker at Microsoft Research Asia. My undergraduate degree is in Mathematics, Operational Research, Statistics, and Economics (MORSE) from
-            <a target="_blank" href="https://www.lancaster.ac.uk">Lancaster University</a>.
+          <p>Prior to my time at the University of Edinburgh, I conducted my Masters in Science studies in Computer Software and Theory under the supervision of Prof. Zhi Jin at
+            <a target="_blank" href="https://cs.pku.edu.cn/English/Home.htm">Peking University</a>.
           </p>
-
-          <p class="muted" style="color: var(--link-hover);">
-            I am always open to research collaborations and discussions. If you are working in the area of AI for time-series forecasting please feel free to send me an email or message me on LinkedIn.
-          </p>
-
+          <p class="muted" style="color: var(--link-hover);">I am always open to research collaborations and discussions. If you are working in the area of AI for time-series forecasting please feel free to send me an email or message me on LinkedIn.</p>
           <p class="links">
-            <a href="mailto:benjamin-redhead@outlook.com">Email</a> &nbsp;/&nbsp;
-            <a href="mailto:s2817214@ed.ac.uk">Institutional Email</a> &nbsp;/&nbsp;
-            <a href="data/Benjamin_Redhead_CV.pdf">CV</a> &nbsp;/&nbsp;
-            <a href="data/Benjamin_Redhead_CV_Mandarin.pdf">CV (Mandarin)</a> &nbsp;/&nbsp;
-            <a href="https://linkedin.com/in/bredhead">LinkedIn</a> &nbsp;/&nbsp;
+            <a href="mailto:benjamin-redhead@outlook.com">Email</a> / 
+            <a href="mailto:s2817214@ed.ac.uk">Institutional Email</a> / 
+            <a href="data/Benjamin_Redhead_CV.pdf">CV</a> / 
+            <a href="data/Benjamin_Redhead_CV_Mandarin.pdf">CV (Mandarin)</a> / 
+            <a href="https://linkedin.com/in/bredhead">LinkedIn</a> / 
             <a href="https://github.com/benjaminredhead">GitHub</a>
           </p>
         </div>
-
         <div class="photo-wrap">
           <img class="profile-pic" src="images/Ben.jpg" alt="Benjamin R. Redhead">
         </div>
@@ -244,55 +202,15 @@
     </div>
   </div>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN CONTENT (example) -->
   <div class="container">
     <div class="section">
       <heading>News</heading>
-      <ul id="news">
-        <li><i>[Sep 2025]</i>&nbsp; Started the CDT MLSystems at the University of Edinburgh</li>
-        <li><i>[Jun 2025]</i>&nbsp; Graduated from Peking University with a Master's of Science</li>
-        <li><i>[May 2024]</i>&nbsp; Presented our work at Microsoft Research Asia's Intern Tech Fest in Beijing.</li>
-        <li><i>[Aug 2022]</i>&nbsp; Started as a CS Master's Student at Peking University.</li>
-        <li><i>[Aug 2022]</i>&nbsp; Honoured to receive the Chinese Government Scholarship to fund my Master's degree and research.</li>
-      </ul>
-    </div>
-
-    <div class="section">
-      <heading>Research</heading>
-      <p>
-        I am broadly interested in designing novel statistical learning algorithms to target large problems in AI for Time Series. My research focuses on algorithms to efficiently learn on small datasets and in non-stationary environments, particularly with regards to long-term time-series forecasting. Here are some of my recent or ongoing projects:
-      </p>
-
-      <div class="section" style="margin-top:12px;">
-        <heading>Decformer: A series-decomposition based approach to long-sequence time series forecasting</heading><br>
-        <b>Benjamin Redhead</b> — Master's Thesis
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="hero" style="grid-template-columns: 2fr 1fr;">
-        <div>
-          <heading>Recent Events</heading><br>
-          I was invited to Microsoft Research Asia to present our ConNST project, which attempted to use change-point detection to guide ensemble learning.
-        </div>
-        <div class="photo-wrap">
-          <img class="profile-pic" src="images/MSRA.jpg" alt="Microsoft Research Asia Presentation">
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <p style="text-align:right; margin:0;">
-        <small>
-          Website template from this
-          <a href="https://github.com/jonbarron/jonbarron_website"><strong>repo</strong></a> and this
-          <a href="https://www.cs.cmu.edu/~dpathak/"><strong>webpage</strong></a>!
-        </small>
-      </p>
+      <ul><li><i>[Sep 2025]</i> Started the CDT MLSystems at the University of Edinburgh</li></ul>
     </div>
   </div>
 
-  <!-- Theme toggle with CORNER RIPPLE -->
+  <!-- Theme toggle ripple script -->
   <script>
     (function () {
       const root   = document.documentElement;
@@ -300,54 +218,45 @@
       const fader  = document.getElementById('theme-fader');
 
       function currentBg() {
-        // computed value of old theme background
         return getComputedStyle(root).getPropertyValue('--bg').trim() || '#fff';
       }
 
-      function rippleFrom(el) {
+      function rippleFrom(el, newTheme) {
         const r = el.getBoundingClientRect();
         const cx = r.left + r.width / 2;
         const cy = r.top  + r.height / 2;
 
-        // Cover screen with OLD theme color, centered on the toggle corner.
+        // Cover with old theme color
+        fader.style.transition = 'none';
         fader.style.background = currentBg();
-        fader.style.clipPath   = `circle(150vmax at ${cx}px ${cy}px)`; // fully covered
-        // next frame: shrink to 0 to reveal NEW theme beneath
-        requestAnimationFrame(() => {
-          fader.style.transition = `clip-path var(--fade) ease`;
-          fader.style.clipPath   = `circle(0px at ${cx}px ${cy}px)`;
-        });
+        fader.style.clipPath   = `circle(150vmax at ${cx}px ${cy}px)`;
+        
+        // Force reflow to apply immediately
+        void fader.offsetWidth;
+
+        // Switch theme under the overlay
+        root.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+
+        // Animate overlay shrinking away
+        fader.style.transition = `clip-path var(--fade) ease`;
+        fader.style.clipPath   = `circle(0px at ${cx}px ${cy}px)`;
       }
 
-      function setTheme(mode) {
-        root.setAttribute('data-theme', mode);
-        localStorage.setItem('theme', mode);
-        btn.setAttribute('aria-pressed', mode === 'dark');
-      }
-
-      // Initial theme (saved or system)
+      // Initial theme
       const saved = localStorage.getItem('theme');
       const start = (saved === 'light' || saved === 'dark')
         ? saved
         : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      setTheme(start);
-      // Ensure fader is invisible initially
-      fader.style.clipPath = 'circle(0 at 100% 0)';
+      root.setAttribute('data-theme', start);
 
-      // Toggle with ripple spreading from the button
       btn.addEventListener('click', () => {
-        const next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
-        // Prepare overlay with OLD color, then switch theme under it, then ripple away
-        rippleFrom(btn);
-        // Switch theme just after scheduling the ripple (same frame is fine)
-        requestAnimationFrame(() => setTheme(next));
+        const current = root.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        rippleFrom(btn, next);
       });
     })();
   </script>
-
-  <!-- Existing scripts -->
-  <script type="text/javascript" src="js/hidebib.js"></script>
-  <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=ezbT827oXKh3ixSroa748SEWXLZGLHuq3PGXKUGyyyg&cl=ffffff&w=a"></script>
 </body>
 </html>
 
