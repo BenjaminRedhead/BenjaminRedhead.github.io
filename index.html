@@ -18,7 +18,7 @@
       --border: #e6e6e6;
       --radius: 12px;
       --shadow: 0 2px 12px rgba(0,0,0,.06);
-      --fade: .70s; /* slow theme fade */
+      --fade: .9s; /* ripple duration (slower -> larger value) */
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -70,7 +70,7 @@
     heading { font-size: 17px; display: inline-block; }
     name { display: inline-block; font-weight: 400; font-size: clamp(26px, 4vw, 36px); }
 
-    /* Smooth color transitions (elements) */
+    /* Subtle transitions for color changes (not the ripple) */
     html, body, .section, .container, .hero, a, #theme-toggle {
       transition: background-color .25s ease, color .25s ease, border-color .25s ease;
     }
@@ -88,14 +88,13 @@
       overflow: hidden;
     }
 
-    /* Full-width hero band (desktop/tablet) */
+    /* Hero band for desktop/tablet only */
     .hero-band {
       background: var(--card);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       padding-block: 16px;
     }
-    /* Optional soft blend where supported (no layout hacks) */
     @supports (background: color-mix(in oklab, white 50%, black 50%)) {
       .hero-band {
         background: linear-gradient(
@@ -105,12 +104,9 @@
         );
       }
     }
-    /* Disable band on phones (restores the “perfect” mobile look) */
-    @media (max-width: 720px) {
-      .hero-band { background: transparent; border: none; padding-block: 0; }
-    }
+    @media (max-width: 720px) { .hero-band { background: transparent; border: none; padding-block: 0; } }
 
-    /* Legacy tables still fine */
+    /* Tables still fine */
     table { width: 100%; background: var(--card); border-collapse: separate; border-spacing: 0; }
     td, th { border-color: var(--border); }
 
@@ -119,16 +115,20 @@
       display: grid;
       grid-template-columns: 2fr 1fr;
       gap: 24px;
-      align-items: start;
+      align-items: center;      /* center vertically on desktop */
     }
-    .photo-wrap { display: flex; justify-content: center; }
+    .photo-wrap {
+      display: flex;
+      justify-content: center;
+      align-self: center;       /* ensure the image column centers too */
+    }
     .profile-pic {
       max-width: 380px; width: 100%; height: auto;
       border-radius: var(--radius); box-shadow: var(--shadow);
     }
     @media (max-width: 900px) { .profile-pic { max-width: 320px; } }
     @media (max-width: 720px) {
-      .hero { grid-template-columns: 1fr; }
+      .hero { grid-template-columns: 1fr; align-items: start; } /* revert for phones */
       .center-sm { text-align: center; }
       .links a { display: inline-block; margin: 4px 6px; }
       .profile-pic { max-width: 420px; }
@@ -140,12 +140,12 @@
     tr[bgcolor] { background: var(--highlight) !important; }
     img { max-width: 100%; height: auto; display: block; }
 
-    /* Toggle button + icon cross-fade; respects phone notches */
+    /* Toggle button + icon cross-fade; respect notches */
     #theme-toggle{
       position: fixed;
       right: calc(12px + env(safe-area-inset-right));
       top:   calc(12px + env(safe-area-inset-top));
-      z-index: 9999;
+      z-index: 10001;
       background: var(--card); color: var(--text);
       border: 1px solid var(--border); border-radius: 999px; padding: 8px 12px;
       cursor: pointer; font: inherit; box-shadow: var(--shadow);
@@ -164,18 +164,18 @@
     :root[data-theme="dark"]  #theme-toggle .icon-sun  { opacity: 1; transform: scale(1); }
     :root[data-theme="dark"]  #theme-toggle .icon-moon { opacity: 0; transform: scale(.85); }
 
-    /* Screen overlay for a true slow fade between themes */
+    /* === RIPPLE OVERLAY for corner spread effect ===
+       Starts covering the whole page with the OLD theme color,
+       then shrinks to the toggle corner, revealing the NEW theme. */
     #theme-fader{
       position: fixed; inset: 0;
-      background: var(--bg);   /* picks up NEW theme bg color */
-      opacity: 0; pointer-events: none;
-      z-index: 9998;           /* just under the toggle */
+      background: var(--bg); /* set inline via JS to OLD theme color before switching */
+      pointer-events: none;
+      z-index: 10000;
+      opacity: 1; /* we animate via clip-path, not opacity */
+      clip-path: circle(0 at 100% 0); /* fallback */
+      transition: clip-path var(--fade) ease;
     }
-    #theme-fader.show { animation: fadeScreen var(--fade) ease both; }
-    @keyframes fadeScreen { from { opacity: 1; } to { opacity: 0; } }
-
-    /* Lists spacing */
-    ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
   </style>
 
   <link rel="icon" type="image/png" href="images/MLSys Icon.png">
@@ -197,7 +197,7 @@
     <span class="icon-moon" aria-hidden="true">🌙</span>
     <span class="icon-sun"  aria-hidden="true">☀️</span>
   </button>
-  <!-- Overlay used to create the slow fade effect -->
+  <!-- Ripple overlay -->
   <div id="theme-fader" aria-hidden="true"></div>
 
   <!-- HERO BAND -->
@@ -292,17 +292,31 @@
     </div>
   </div>
 
-  <!-- Theme toggle with slow screen fade -->
+  <!-- Theme toggle with CORNER RIPPLE -->
   <script>
     (function () {
-      const root  = document.documentElement;
-      const btn   = document.getElementById('theme-toggle');
-      const fader = document.getElementById('theme-fader');
+      const root   = document.documentElement;
+      const btn    = document.getElementById('theme-toggle');
+      const fader  = document.getElementById('theme-fader');
 
-      function flashFade(){
-        fader.classList.remove('show');  // restart animation
-        void fader.offsetWidth;          // force reflow
-        fader.classList.add('show');
+      function currentBg() {
+        // computed value of old theme background
+        return getComputedStyle(root).getPropertyValue('--bg').trim() || '#fff';
+      }
+
+      function rippleFrom(el) {
+        const r = el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top  + r.height / 2;
+
+        // Cover screen with OLD theme color, centered on the toggle corner.
+        fader.style.background = currentBg();
+        fader.style.clipPath   = `circle(150vmax at ${cx}px ${cy}px)`; // fully covered
+        // next frame: shrink to 0 to reveal NEW theme beneath
+        requestAnimationFrame(() => {
+          fader.style.transition = `clip-path var(--fade) ease`;
+          fader.style.clipPath   = `circle(0px at ${cx}px ${cy}px)`;
+        });
       }
 
       function setTheme(mode) {
@@ -317,12 +331,16 @@
         ? saved
         : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       setTheme(start);
+      // Ensure fader is invisible initially
+      fader.style.clipPath = 'circle(0 at 100% 0)';
 
-      // Toggle with slow fade
+      // Toggle with ripple spreading from the button
       btn.addEventListener('click', () => {
         const next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
-        setTheme(next);
-        flashFade();
+        // Prepare overlay with OLD color, then switch theme under it, then ripple away
+        rippleFrom(btn);
+        // Switch theme just after scheduling the ripple (same frame is fine)
+        requestAnimationFrame(() => setTheme(next));
       });
     })();
   </script>
@@ -332,6 +350,7 @@
   <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=ezbT827oXKh3ixSroa748SEWXLZGLHuq3PGXKUGyyyg&cl=ffffff&w=a"></script>
 </body>
 </html>
+
 
 
 
