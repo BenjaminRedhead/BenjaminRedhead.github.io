@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Benjamin R. Redhead</title>
 
   <style>
@@ -18,6 +18,7 @@
       --border: #e6e6e6;
       --radius: 12px;
       --shadow: 0 2px 12px rgba(0,0,0,.06);
+      --fade: .65s; /* slow theme fade */
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -60,11 +61,6 @@
     a { color: var(--link); text-decoration: none; }
     a:hover, a:focus { color: var(--link-hover); text-decoration: none; }
 
-    /* Smooth theme transitions (page-wide) */
-    html, body, .section, .container, .hero, a, #theme-toggle {
-      transition: background-color .25s ease, color .25s ease, border-color .25s ease;
-    }
-
     body, td, th, tr, p, a, strong, heading, papertitle, name {
       font-family: 'Titillium Web', Verdana, Helvetica, sans-serif;
       font-size: 16px; font-weight: 400; color: var(--text);
@@ -74,10 +70,9 @@
     heading { font-size: 17px; display: inline-block; }
     name { display: inline-block; font-weight: 400; font-size: clamp(26px, 4vw, 36px); }
 
-    /* === CONTAINER === */
+    /* === LAYOUT === */
     .container { width: min(100%, 900px); margin: 0 auto; padding: 16px; }
 
-    /* Sections styled like cards */
     .section {
       background: var(--card);
       border: 1px solid var(--border);
@@ -85,47 +80,57 @@
       box-shadow: var(--shadow);
       padding: 16px;
       margin: 16px 0;
-      overflow: hidden; /* ensures no spillover on images */
+      overflow: hidden;
     }
 
-    /* Full-bleed hero background band */
+    /* Full-width hero band WITHOUT overflow tricks (mobile-safe) */
     .hero-band {
-      position: relative;
-      left: 50%;
-      right: 50%;
-      margin-left: -50vw;
-      margin-right: -50vw;
-      width: 100vw;
-      background: linear-gradient(
-        180deg,
-        var(--card),
-        color-mix(in oklab, var(--card) 85%, var(--bg) 15%)
-      );
+      background: var(--card);           /* solid fallback */
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       padding-block: 16px;
     }
+    /* Optional soft blend if supported, no layout hacks */
+    @supports (background: color-mix(in oklab, white 50%, black 50%)) {
+      .hero-band {
+        background: linear-gradient(
+          180deg,
+          var(--card),
+          color-mix(in oklab, var(--card) 85%, var(--bg) 15%)
+        );
+      }
+    }
 
-    /* Tables (legacy content) */
+    /* Legacy tables (keep working) */
     table { width: 100%; background: var(--card); border-collapse: separate; border-spacing: 0; }
     td, th { border-color: var(--border); }
 
-    /* Media */
-    img { max-width: 100%; height: auto; display: block; }
-    .profile-pic { border-radius: var(--radius); box-shadow: var(--shadow); }
-    .w-100 { width: 100% !important; }
-
-    /* Hero grid: text + photo */
+    /* HERO GRID */
     .hero {
       display: grid;
       grid-template-columns: 2fr 1fr;
       gap: 24px;
-      align-items: center;
+      align-items: start;
+    }
+    .photo-wrap {
+      display: flex;
+      justify-content: center; /* centers the image in its column */
+    }
+    .profile-pic {
+      max-width: 380px;   /* keeps nice proportion on desktop */
+      width: 100%;
+      height: auto;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    @media (max-width: 900px) {
+      .profile-pic { max-width: 320px; }
     }
     @media (max-width: 720px) {
       .hero { grid-template-columns: 1fr; }
       .center-sm { text-align: center; }
       .links a { display: inline-block; margin: 4px 6px; }
+      .photo-wrap { justify-content: center; }
     }
 
     .links { text-align: center; margin-top: 8px; }
@@ -133,7 +138,7 @@
     span.highlight { background-color: var(--highlight); }
     tr[bgcolor] { background: var(--highlight) !important; }
 
-    /* Toggle button + cross-fade icons */
+    /* Toggle button + icon cross-fade */
     #theme-toggle{
       position: fixed; right: 16px; top: 16px; z-index: 9999;
       background: var(--card); color: var(--text);
@@ -147,12 +152,22 @@
       position: absolute;
       opacity: 0;
       transform: scale(.85);
-      transition: opacity .25s ease, transform .25s ease;
+      transition: opacity var(--fade) ease, transform var(--fade) ease;
     }
     :root[data-theme="light"] #theme-toggle .icon-moon { opacity: 1; transform: scale(1); }
     :root[data-theme="light"] #theme-toggle .icon-sun  { opacity: 0; transform: scale(.85); }
     :root[data-theme="dark"]  #theme-toggle .icon-sun  { opacity: 1; transform: scale(1); }
     :root[data-theme="dark"]  #theme-toggle .icon-moon { opacity: 0; transform: scale(.85); }
+
+    /* True page-wide theme fade */
+    @media (prefers-reduced-motion: no-preference) {
+      html.theme-transition, html.theme-transition * {
+        transition: background-color var(--fade) ease,
+                    color var(--fade) ease,
+                    border-color var(--fade) ease,
+                    box-shadow var(--fade) ease;
+      }
+    }
 
     /* Lists spacing */
     ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
@@ -178,7 +193,7 @@
     <span class="icon-sun"  aria-hidden="true">☀️</span>
   </button>
 
-  <!-- HERO BAND (full-width background) -->
+  <!-- HERO BAND (full width, mobile safe) -->
   <div class="hero-band">
     <div class="container">
       <div class="hero">
@@ -215,8 +230,8 @@
           </p>
         </div>
 
-        <div>
-          <img class="profile-pic w-100" src="images/Ben.jpg" alt="Benjamin R. Redhead">
+        <div class="photo-wrap">
+          <img class="profile-pic" src="images/Ben.jpg" alt="Benjamin R. Redhead">
         </div>
       </div>
     </div>
@@ -253,8 +268,8 @@
           <heading>Recent Events</heading><br>
           I was invited to Microsoft Research Asia to present our ConNST project, which attempted to use change-point detection to guide ensemble learning.
         </div>
-        <div>
-          <img class="w-100" src="images/MSRA.jpg" alt="Microsoft Research Asia Presentation">
+        <div class="photo-wrap">
+          <img class="profile-pic" src="images/MSRA.jpg" alt="Microsoft Research Asia Presentation">
         </div>
       </div>
     </div>
@@ -270,11 +285,20 @@
     </div>
   </div>
 
-  <!-- Dark mode toggle script (with icon cross-fade) -->
+  <!-- Theme toggle with slow fade -->
   <script>
     (function () {
       const root = document.documentElement;
       const btn  = document.getElementById('theme-toggle');
+
+      function withThemeTransition(fn){
+        // Add a temporary class to animate the whole page
+        root.classList.add('theme-transition');
+        requestAnimationFrame(()=>{ // ensure class is applied before changes
+          fn();
+          setTimeout(()=>root.classList.remove('theme-transition'), 700); // ~var(--fade)
+        });
+      }
 
       function setTheme(mode) {
         root.setAttribute('data-theme', mode);
@@ -282,20 +306,22 @@
         btn.setAttribute('aria-pressed', mode === 'dark');
       }
 
+      // Initial theme (saved or system)
       const saved = localStorage.getItem('theme');
       const start = (saved === 'light' || saved === 'dark')
         ? saved
         : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       setTheme(start);
 
+      // Toggle
       btn.addEventListener('click', () => {
         const next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
-        setTheme(next);
+        withThemeTransition(()=> setTheme(next));
       });
     })();
   </script>
 
-  <!-- Your existing scripts -->
+  <!-- Existing scripts -->
   <script type="text/javascript" src="js/hidebib.js"></script>
   <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=ezbT827oXKh3ixSroa748SEWXLZGLHuq3PGXKUGyyyg&cl=ffffff&w=a"></script>
 </body>
