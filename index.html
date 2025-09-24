@@ -60,6 +60,11 @@
     a { color: var(--link); text-decoration: none; }
     a:hover, a:focus { color: var(--link-hover); text-decoration: none; }
 
+    /* Smooth theme transitions (page-wide) */
+    html, body, .section, .container, .hero, a, #theme-toggle {
+      transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+    }
+
     body, td, th, tr, p, a, strong, heading, papertitle, name {
       font-family: 'Titillium Web', Verdana, Helvetica, sans-serif;
       font-size: 16px; font-weight: 400; color: var(--text);
@@ -67,23 +72,12 @@
     }
     strong, papertitle, heading { font-weight: 600; }
     heading { font-size: 17px; display: inline-block; }
-    name { 
-      display: inline-block; 
-      font-weight: 400; 
-      /* scales nicely from phones to desktops */
-      font-size: clamp(26px, 4vw, 36px);
-    }
+    name { display: inline-block; font-weight: 400; font-size: clamp(26px, 4vw, 36px); }
 
-    /* === LAYOUT CONTAINER (replaces fixed 900px) === */
-    .container {
-      width: min(100%, 900px);
-      margin: 0 auto;
-      padding: 16px;
-    }
+    /* === CONTAINER === */
+    .container { width: min(100%, 900px); margin: 0 auto; padding: 16px; }
 
-    /* Cards (your tables get this look without changing markup much) */
-    table { width: 100%; background: var(--card); border-collapse: separate; border-spacing: 0; }
-    td, th { border-color: var(--border); }
+    /* Sections styled like cards */
     .section {
       background: var(--card);
       border: 1px solid var(--border);
@@ -91,16 +85,37 @@
       box-shadow: var(--shadow);
       padding: 16px;
       margin: 16px 0;
+      overflow: hidden; /* ensures no spillover on images */
     }
 
-    /* === RESPONSIVE MEDIA === */
+    /* Full-bleed hero background band */
+    .hero-band {
+      position: relative;
+      left: 50%;
+      right: 50%;
+      margin-left: -50vw;
+      margin-right: -50vw;
+      width: 100vw;
+      background: linear-gradient(
+        180deg,
+        var(--card),
+        color-mix(in oklab, var(--card) 85%, var(--bg) 15%)
+      );
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding-block: 16px;
+    }
+
+    /* Tables (legacy content) */
+    table { width: 100%; background: var(--card); border-collapse: separate; border-spacing: 0; }
+    td, th { border-color: var(--border); }
+
+    /* Media */
     img { max-width: 100%; height: auto; display: block; }
     .profile-pic { border-radius: var(--radius); box-shadow: var(--shadow); }
-
-    /* Fix legacy width attributes like width="130%" via a helper class */
     .w-100 { width: 100% !important; }
 
-    /* === HEADER TWO-COLUMN → stacks on small screens === */
+    /* Hero grid: text + photo */
     .hero {
       display: grid;
       grid-template-columns: 2fr 1fr;
@@ -113,19 +128,31 @@
       .links a { display: inline-block; margin: 4px 6px; }
     }
 
-    /* Utility */
     .links { text-align: center; margin-top: 8px; }
     .muted { color: var(--muted); }
     span.highlight { background-color: var(--highlight); }
-    tr[bgcolor] { background: var(--highlight) !important; } /* override inline */
+    tr[bgcolor] { background: var(--highlight) !important; }
 
-    /* Toggle button */
+    /* Toggle button + cross-fade icons */
     #theme-toggle{
       position: fixed; right: 16px; top: 16px; z-index: 9999;
       background: var(--card); color: var(--text);
       border: 1px solid var(--border); border-radius: 999px; padding: 8px 12px;
       cursor: pointer; font: inherit; box-shadow: var(--shadow);
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px;
     }
+    #theme-toggle .icon-sun,
+    #theme-toggle .icon-moon{
+      position: absolute;
+      opacity: 0;
+      transform: scale(.85);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    :root[data-theme="light"] #theme-toggle .icon-moon { opacity: 1; transform: scale(1); }
+    :root[data-theme="light"] #theme-toggle .icon-sun  { opacity: 0; transform: scale(.85); }
+    :root[data-theme="dark"]  #theme-toggle .icon-sun  { opacity: 1; transform: scale(1); }
+    :root[data-theme="dark"]  #theme-toggle .icon-moon { opacity: 0; transform: scale(.85); }
 
     /* Lists spacing */
     ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
@@ -146,11 +173,14 @@
 
 <body>
   <!-- Dark mode toggle -->
-  <button id="theme-toggle" type="button" aria-label="Toggle dark mode">🌙</button>
+  <button id="theme-toggle" type="button" aria-label="Toggle dark mode">
+    <span class="icon-moon" aria-hidden="true">🌙</span>
+    <span class="icon-sun"  aria-hidden="true">☀️</span>
+  </button>
 
-  <div class="container">
-    <!-- HERO: text + photo (responsive grid) -->
-    <div class="section">
+  <!-- HERO BAND (full-width background) -->
+  <div class="hero-band">
+    <div class="container">
       <div class="hero">
         <div>
           <p class="center-sm"><name>Benjamin R. Redhead</name></p>
@@ -186,13 +216,14 @@
         </div>
 
         <div>
-          <!-- Photo becomes fluid; no width="130%" -->
           <img class="profile-pic w-100" src="images/Ben.jpg" alt="Benjamin R. Redhead">
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- News -->
+  <!-- MAIN CONTENT -->
+  <div class="container">
     <div class="section">
       <heading>News</heading>
       <ul id="news">
@@ -204,7 +235,6 @@
       </ul>
     </div>
 
-    <!-- Research -->
     <div class="section">
       <heading>Research</heading>
       <p>
@@ -217,7 +247,6 @@
       </div>
     </div>
 
-    <!-- Recent Events -->
     <div class="section">
       <div class="hero" style="grid-template-columns: 2fr 1fr;">
         <div>
@@ -230,7 +259,6 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="section">
       <p style="text-align:right; margin:0;">
         <small>
@@ -242,16 +270,15 @@
     </div>
   </div>
 
-  <!-- === Dark mode toggle script === -->
+  <!-- Dark mode toggle script (with icon cross-fade) -->
   <script>
     (function () {
       const root = document.documentElement;
-      const btn = document.getElementById('theme-toggle');
+      const btn  = document.getElementById('theme-toggle');
 
       function setTheme(mode) {
         root.setAttribute('data-theme', mode);
         localStorage.setItem('theme', mode);
-        btn.textContent = (mode === 'dark') ? '☀️' : '🌙';
         btn.setAttribute('aria-pressed', mode === 'dark');
       }
 
@@ -273,5 +300,6 @@
   <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=ezbT827oXKh3ixSroa748SEWXLZGLHuq3PGXKUGyyyg&cl=ffffff&w=a"></script>
 </body>
 </html>
+
 
 
