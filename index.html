@@ -18,7 +18,7 @@
       --border: #e6e6e6;
       --radius: 12px;
       --shadow: 0 2px 12px rgba(0,0,0,.06);
-      --fade: .65s; /* slow theme fade */
+      --fade: .70s; /* slow theme fade */
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -70,6 +70,11 @@
     heading { font-size: 17px; display: inline-block; }
     name { display: inline-block; font-weight: 400; font-size: clamp(26px, 4vw, 36px); }
 
+    /* Smooth color transitions (elements) */
+    html, body, .section, .container, .hero, a, #theme-toggle {
+      transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+    }
+
     /* === LAYOUT === */
     .container { width: min(100%, 900px); margin: 0 auto; padding: 16px; }
 
@@ -83,14 +88,14 @@
       overflow: hidden;
     }
 
-    /* Full-width hero band WITHOUT overflow tricks (mobile-safe) */
+    /* Full-width hero band (desktop/tablet) */
     .hero-band {
-      background: var(--card);           /* solid fallback */
+      background: var(--card);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       padding-block: 16px;
     }
-    /* Optional soft blend if supported, no layout hacks */
+    /* Optional soft blend where supported (no layout hacks) */
     @supports (background: color-mix(in oklab, white 50%, black 50%)) {
       .hero-band {
         background: linear-gradient(
@@ -100,8 +105,12 @@
         );
       }
     }
+    /* Disable band on phones (restores the “perfect” mobile look) */
+    @media (max-width: 720px) {
+      .hero-band { background: transparent; border: none; padding-block: 0; }
+    }
 
-    /* Legacy tables (keep working) */
+    /* Legacy tables still fine */
     table { width: 100%; background: var(--card); border-collapse: separate; border-spacing: 0; }
     td, th { border-color: var(--border); }
 
@@ -112,35 +121,31 @@
       gap: 24px;
       align-items: start;
     }
-    .photo-wrap {
-      display: flex;
-      justify-content: center; /* centers the image in its column */
-    }
+    .photo-wrap { display: flex; justify-content: center; }
     .profile-pic {
-      max-width: 380px;   /* keeps nice proportion on desktop */
-      width: 100%;
-      height: auto;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      max-width: 380px; width: 100%; height: auto;
+      border-radius: var(--radius); box-shadow: var(--shadow);
     }
-    @media (max-width: 900px) {
-      .profile-pic { max-width: 320px; }
-    }
+    @media (max-width: 900px) { .profile-pic { max-width: 320px; } }
     @media (max-width: 720px) {
       .hero { grid-template-columns: 1fr; }
       .center-sm { text-align: center; }
       .links a { display: inline-block; margin: 4px 6px; }
-      .photo-wrap { justify-content: center; }
+      .profile-pic { max-width: 420px; }
     }
 
     .links { text-align: center; margin-top: 8px; }
     .muted { color: var(--muted); }
     span.highlight { background-color: var(--highlight); }
     tr[bgcolor] { background: var(--highlight) !important; }
+    img { max-width: 100%; height: auto; display: block; }
 
-    /* Toggle button + icon cross-fade */
+    /* Toggle button + icon cross-fade; respects phone notches */
     #theme-toggle{
-      position: fixed; right: 16px; top: 16px; z-index: 9999;
+      position: fixed;
+      right: calc(12px + env(safe-area-inset-right));
+      top:   calc(12px + env(safe-area-inset-top));
+      z-index: 9999;
       background: var(--card); color: var(--text);
       border: 1px solid var(--border); border-radius: 999px; padding: 8px 12px;
       cursor: pointer; font: inherit; box-shadow: var(--shadow);
@@ -159,15 +164,15 @@
     :root[data-theme="dark"]  #theme-toggle .icon-sun  { opacity: 1; transform: scale(1); }
     :root[data-theme="dark"]  #theme-toggle .icon-moon { opacity: 0; transform: scale(.85); }
 
-    /* True page-wide theme fade */
-    @media (prefers-reduced-motion: no-preference) {
-      html.theme-transition, html.theme-transition * {
-        transition: background-color var(--fade) ease,
-                    color var(--fade) ease,
-                    border-color var(--fade) ease,
-                    box-shadow var(--fade) ease;
-      }
+    /* Screen overlay for a true slow fade between themes */
+    #theme-fader{
+      position: fixed; inset: 0;
+      background: var(--bg);   /* picks up NEW theme bg color */
+      opacity: 0; pointer-events: none;
+      z-index: 9998;           /* just under the toggle */
     }
+    #theme-fader.show { animation: fadeScreen var(--fade) ease both; }
+    @keyframes fadeScreen { from { opacity: 1; } to { opacity: 0; } }
 
     /* Lists spacing */
     ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
@@ -192,8 +197,10 @@
     <span class="icon-moon" aria-hidden="true">🌙</span>
     <span class="icon-sun"  aria-hidden="true">☀️</span>
   </button>
+  <!-- Overlay used to create the slow fade effect -->
+  <div id="theme-fader" aria-hidden="true"></div>
 
-  <!-- HERO BAND (full width, mobile safe) -->
+  <!-- HERO BAND -->
   <div class="hero-band">
     <div class="container">
       <div class="hero">
@@ -285,19 +292,17 @@
     </div>
   </div>
 
-  <!-- Theme toggle with slow fade -->
+  <!-- Theme toggle with slow screen fade -->
   <script>
     (function () {
-      const root = document.documentElement;
-      const btn  = document.getElementById('theme-toggle');
+      const root  = document.documentElement;
+      const btn   = document.getElementById('theme-toggle');
+      const fader = document.getElementById('theme-fader');
 
-      function withThemeTransition(fn){
-        // Add a temporary class to animate the whole page
-        root.classList.add('theme-transition');
-        requestAnimationFrame(()=>{ // ensure class is applied before changes
-          fn();
-          setTimeout(()=>root.classList.remove('theme-transition'), 700); // ~var(--fade)
-        });
+      function flashFade(){
+        fader.classList.remove('show');  // restart animation
+        void fader.offsetWidth;          // force reflow
+        fader.classList.add('show');
       }
 
       function setTheme(mode) {
@@ -313,10 +318,11 @@
         : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       setTheme(start);
 
-      // Toggle
+      // Toggle with slow fade
       btn.addEventListener('click', () => {
         const next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
-        withThemeTransition(()=> setTheme(next));
+        setTheme(next);
+        flashFade();
       });
     })();
   </script>
