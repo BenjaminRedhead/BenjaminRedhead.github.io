@@ -90,7 +90,7 @@
     }
 
     /* === LAYOUT === */
-    .container { width: min(100%, 900px); margin: 0 auto; padding: 16px; }
+    .container { width: min(100%, 900px); margin: 0 auto; padding: 16px; box-sizing: border-box; }
 
     .section {
       background: var(--card);
@@ -100,6 +100,7 @@
       padding: 16px;
       margin: 16px 0;
       overflow: hidden;
+      box-sizing: border-box;
     }
 
     .hero-band {
@@ -143,7 +144,10 @@
       .hero { grid-template-columns: 1fr; align-items: start; }
       .center-sm { text-align: center; }
       .links a { display: inline-block; margin: 4px 6px; }
-      .profile-pic { max-width: 420px; }
+      .profile-pic { max-width: 320px; }
+    }
+    @media (max-width: 480px) {
+      .profile-pic { max-width: 220px; }
     }
 
     .links { text-align: center; margin-top: 8px; }
@@ -297,6 +301,7 @@
         <li><i>[Oct 2026]</i>&nbsp; Our paper on signature-kernel metrics for tail-event forecasting was accepted at NeurIPS 2026, Sydney!</li>
         <li><i>[Sep 2026]</i>&nbsp; Started a research internship at Microsoft Research Asia (Machine Learning group, with Chang Xu), working on probabilistic multivariate time-series forecasting foundation models.</li>
         <li><i>[Jul 2026]</i>&nbsp; Presented our work at the <a target="_blank" href="https://icml-structured-fm-workshop.github.io/">ICML 2026 Workshop on Foundation Models for Structured Data</a> in Seoul.</li>
+        <li><i>[May 2026]</i>&nbsp; Received an Isambard AI Gateway grant to power our foundation model evaluation and our novel foundation model architecture (TBA).</li>
         <li><i>[Sep 2025]</i>&nbsp; Started the CDT in Machine Learning Systems at the University of Edinburgh.</li>
         <li><i>[Jun 2025]</i>&nbsp; Graduated from Peking University with an MSc.</li>
       </ul>
