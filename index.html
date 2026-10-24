@@ -5,31 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Benjamin R. Redhead</title>
 
+  <meta name="description" content="Benjamin R. Redhead, PhD student at the University of Edinburgh working on probabilistic time-series forecasting.">
+  <meta property="og:title" content="Benjamin R. Redhead">
+  <meta property="og:description" content="Benjamin R. Redhead, PhD student at the University of Edinburgh working on probabilistic time-series forecasting.">
+  <meta property="og:image" content="https://benjaminredhead.github.io/images/Ben.webp">
+  <meta property="og:url" content="https://benjaminredhead.github.io/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Benjamin R. Redhead">
+  <meta name="twitter:description" content="Benjamin R. Redhead, PhD student at the University of Edinburgh working on probabilistic time-series forecasting.">
+  <meta name="twitter:image" content="https://benjaminredhead.github.io/images/Ben.webp">
+
   <style>
     /* === THEME TOKENS === */
     :root {
       --bg: #F8FAFC;
       --text: #0B1220;
       --muted: #5A6B85;
-      --accent: #048C6C;         /* light mode link + highlighted text color */
+      --accent: #048C6C;
       --accent-hover: #048C6C;
-      --highlight-text: #048C6C; /* for <span class="highlight"> as text color */
-      --highlight-bg: #CFFFEA;   /* soft row/card highlight background */
+      --highlight-text: #048C6C;
+      --highlight-bg: #CFFFEA;
       --card: #ffffff;
       --border: #E6EAF0;
       --radius: 12px;
       --shadow: 0 2px 12px rgba(0,0,0,.06);
-      --fade: 1s; /* ripple duration */
+      --fade: 1s;
     }
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #0B0F0E;
         --text: #EAF7F2;
         --muted: #9DB5AE;
-        --accent: #00F5A0;         /* dark mode link + highlighted text color */
+        --accent: #00F5A0;
         --accent-hover: #00F5A0;
         --highlight-text:#00F5A0;
-        --highlight-bg: #07252C;   /* soft band in dark */
+        --highlight-bg: #07252C;
         --card: #101614;
         --border: #1B2422;
         --shadow: 0 2px 12px rgba(0,0,0,.35);
@@ -39,10 +50,10 @@
       --bg: #0B0F0E;
       --text: #EAF7F2;
       --muted: #9DB5AE;
-      --accent: #00F5A0;         /* dark mode link + highlighted text color */
+      --accent: #00F5A0;
       --accent-hover: #00F5A0;
       --highlight-text:#00F5A0;
-      --highlight-bg: #07252C;   /* soft band in dark */
+      --highlight-bg: #07252C;
       --card: #101614;
       --border: #1B2422;
       --shadow: 0 2px 12px rgba(0,0,0,.35);
@@ -51,10 +62,10 @@
       --bg: #F8FAFC;
       --text: #0B1220;
       --muted: #5A6B85;
-      --accent: #048C6C;         /* light mode link + highlighted text color */
+      --accent: #048C6C;
       --accent-hover: #048C6C;
-      --highlight-text: #048C6C; /* for <span class="highlight"> as text color */
-      --highlight-bg: #CFFFEA;   /* soft row/card highlight background */
+      --highlight-text: #048C6C;
+      --highlight-bg: #CFFFEA;
       --card: #ffffff;
       --border: #E6EAF0;
       --shadow: 0 2px 12px rgba(0,0,0,.06);
@@ -74,7 +85,6 @@
     heading { font-size: 17px; display: inline-block; }
     name { display: inline-block; font-weight: 400; font-size: clamp(26px, 4vw, 36px); }
 
-    /* Subtle color transitions for regular changes */
     html, body, .section, .container, .hero, a, #theme-toggle {
       transition: background-color .25s ease, color .25s ease, border-color .25s ease;
     }
@@ -92,7 +102,6 @@
       overflow: hidden;
     }
 
-    /* Desktop/tablet hero band */
     .hero-band {
       background: var(--card);
       border-top: 1px solid var(--border);
@@ -108,10 +117,8 @@
         );
       }
     }
-    /* Turn band off on phones to keep mobile super clean */
     @media (max-width: 720px) { .hero-band { background: transparent; border: none; padding-block: 0; } }
 
-    /* Tables (legacy content kept compatible) */
     table { width: 100%; background: var(--card); border-collapse: separate; border-spacing: 0; }
     td, th { border-color: var(--border); }
 
@@ -120,7 +127,7 @@
       display: grid;
       grid-template-columns: 2fr 1fr;
       gap: 24px;
-      align-items: center;             /* centers headshot next to text on desktop */
+      align-items: center;
     }
     .photo-wrap {
       display: flex;
@@ -142,16 +149,13 @@
     .links { text-align: center; margin-top: 8px; }
     .muted { color: var(--muted); }
 
-    /* “Highlighted text” should be accent colored text (not yellow bg) */
     span.highlight { color: var(--highlight-text); background: transparent; font-weight: 600; }
-
-    /* Keep old row highlight backgrounds readable in both themes */
     tr[bgcolor] { background: var(--highlight-bg) !important; }
 
     img { max-width: 100%; height: auto; display: block; }
 
-    /* Toggle button + icon cross-fade; respect notches */
-    #theme-toggle{
+    /* Toggle button */
+    #theme-toggle {
       position: fixed;
       right: calc(12px + env(safe-area-inset-right));
       top:   calc(12px + env(safe-area-inset-top));
@@ -163,7 +167,7 @@
       width: 40px; height: 40px;
     }
     #theme-toggle .icon-sun,
-    #theme-toggle .icon-moon{
+    #theme-toggle .icon-moon {
       position: absolute;
       opacity: 0;
       transform: scale(.85);
@@ -174,21 +178,52 @@
     :root[data-theme="dark"]  #theme-toggle .icon-sun  { opacity: 1; transform: scale(1); }
     :root[data-theme="dark"]  #theme-toggle .icon-moon { opacity: 0; transform: scale(.85); }
 
-    /* Ripple overlay (corner spread) */
-    #theme-fader{
+    /* Ripple overlay */
+    #theme-fader {
       position: fixed; inset: 0;
-      background: var(--bg);            /* set to OLD theme bg via JS before switch */
+      background: var(--bg);
       pointer-events: none;
       z-index: 10000;
-      /* we animate the clip-path from fully covered to 0 at the toggle button */
       clip-path: circle(0 at 100% 0);
       -webkit-clip-path: circle(0 at 100% 0);
       will-change: clip-path;
     }
+
+    /* === PUBLICATION ROW === */
+    .pub-row {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      margin-top: 12px;
+    }
+    .pub-thumb { flex: 0 0 160px; }
+    .pub-thumb img { border-radius: 8px; width: 100%; height: auto; }
+    .pub-text { flex: 1; line-height: 1.5; }
+    .pub-links { margin: 4px 0; }
+    .pub-links a { margin-right: 8px; }
+    pre.bib {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      overflow-x: auto;
+      margin-top: 8px;
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre;
+      line-height: 1.4;
+      color: var(--text);
+    }
+    @media (max-width: 600px) {
+      .pub-row { flex-direction: column; }
+      .pub-thumb { flex: none; width: 100%; max-width: 280px; }
+    }
   </style>
 
   <link rel="icon" type="image/png" href="images/WebLogo.png" />
-  <link href="https://fonts.googleapis.com/css?family=Titillium+Web:400,600,400italic,600italic,300,300italic" rel="stylesheet" type="text/css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
 
   <!-- Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZYJGJ1XX4C"></script>
@@ -217,19 +252,23 @@
           <p class="center-sm"><name>Benjamin R. Redhead</name></p>
 
           <p>
-            I am a first year PhD student at the
-            <a target="_blank" href="https://informatics.ed.ac.uk/cdt-in-machine-learning-systems">EPSRC CDT Machine Learning Systems</a>
-            in the School of Informatics, University of Edinburgh, advised by Prof. Amos Storkey. My research is jointly funded via the EPSRC grant no. EP/Y03516X/1 and the University of Edinburgh.
-          </p>
-
-          <p>
-            Prior to my time at the University of Edinburgh, I conducted my Masters in Science studies in Computer Software and Theory under the supervision of Prof. Zhi Jin at
-            <a target="_blank" href="https://cs.pku.edu.cn/English/Home.htm">Peking University</a>. During this time, I worked primarily on a heterogeneous mixture-of-experts approach to robust time-series forecasting, which formed the basis of my master’s thesis as well as presenting this as a guest speaker at Microsoft Research Asia. My undergraduate degree is in Mathematics, Operational Research, Statistics, and Economics (MORSE) from
+            My research focuses on probabilistic time-series forecasting, time-series foundation
+            models, and evaluating forecasts on tail and high-utility events.
+            I am a first-year PhD student in the
+            <a target="_blank" href="https://informatics.ed.ac.uk/cdt-in-machine-learning-systems">EPSRC CDT in Machine Learning Systems</a>,
+            School of Informatics, University of Edinburgh, advised by Prof. Amos Storkey and Prof. Víctor Elvira;
+            my research is funded by the EPSRC grant no. EP/Y03516X/1 and the University of Edinburgh.
+            I am currently a research intern at Microsoft Research Asia (Machine Learning group,
+            with Chang Xu), Sep–Nov 2026, working on probabilistic multivariate time-series
+            forecasting foundation models.
+            Previously, I completed an MSc in Computer Software and Theory at
+            <a target="_blank" href="https://cs.pku.edu.cn/English/Home.htm">Peking University</a>
+            under Prof. Zhi Jin, and a BSc in MORSE at
             <a target="_blank" href="https://www.lancaster.ac.uk">Lancaster University</a>.
           </p>
 
-          <p class="muted" style="color: var(--accent-hover);">
-            I am always open to research collaborations and discussions. If you are working in the area of AI for time-series forecasting please feel free to send me an email or message me on LinkedIn.
+          <p style="color: var(--accent-hover);">
+            I'm happy to chat about time-series forecasting research — feel free to email me.
           </p>
 
           <p class="links">
@@ -238,12 +277,13 @@
             <a href="data/Benjamin_Redhead_CV.pdf">CV</a> &nbsp;/&nbsp;
             <a href="data/Benjamin_Redhead_CV_Mandarin.pdf">CV (Mandarin)</a> &nbsp;/&nbsp;
             <a href="https://linkedin.com/in/bredhead">LinkedIn</a> &nbsp;/&nbsp;
-            <a href="https://github.com/benjaminredhead">GitHub</a>
+            <a href="https://github.com/benjaminredhead">GitHub</a> &nbsp;/&nbsp;
+            <a href="https://scholar.google.com/citations?user=sCV21U4AAAAJ&hl=en">Google Scholar</a>
           </p>
         </div>
 
         <div class="photo-wrap">
-          <img class="profile-pic" src="images/Ben.jpg" alt="Benjamin R. Redhead">
+          <img class="profile-pic" src="images/Ben.webp" width="533" height="800" alt="Benjamin R. Redhead">
         </div>
       </div>
     </div>
@@ -251,45 +291,96 @@
 
   <!-- MAIN CONTENT -->
   <div class="container">
-    <!-- News (restored full list) -->
+
+    <!-- News -->
     <div class="section">
       <heading>News</heading>
-      <ul id="news">
-        <li> <i>[Sep 2025]</i>&nbsp; Started the CDT MLSystems at the University of Edinburgh</li>
-        <li> <i>[Jun 2025]</i>&nbsp; Graduated from Peking University with a Master's of Science</li>
-        <li> <i>[May 2024]</i>&nbsp; Presented our work at Microsoft Research Asia's Intern Tech Fest in Beijing.</li>
-        <li> <i>[Aug 2022]</i>&nbsp; Started as a CS Master's Student at Peking University.</li>
-        <li> <i>[Aug 2022]</i>&nbsp; Honoured to receive the Chinese Government Scholarship to fund my Master's degree and research.</li>
+      <ul id="news" style="margin-top:8px;">
+        <li><i>[Oct 2026]</i>&nbsp; Our paper on signature-kernel metrics for tail-event forecasting was accepted at NeurIPS 2026, Sydney!</li>
+        <li><i>[Sep 2026]</i>&nbsp; Started a research internship at Microsoft Research Asia (Machine Learning group, with Chang Xu), working on probabilistic multivariate time-series forecasting foundation models.</li>
+        <li><i>[Jul 2026]</i>&nbsp; Presented our work at the <a target="_blank" href="https://icml-structured-fm-workshop.github.io/">ICML 2026 Workshop on Foundation Models for Structured Data</a> in Seoul.</li>
+        <li><i>[Sep 2025]</i>&nbsp; Started the CDT in Machine Learning Systems at the University of Edinburgh.</li>
+        <li><i>[Jun 2025]</i>&nbsp; Graduated from Peking University with an MSc.</li>
       </ul>
     </div>
 
-    <!-- Research (restored) -->
+    <!-- Research Interests -->
     <div class="section">
-      <heading>Research</heading>
-      <p>
-       My research interest is in the field of foundation models for time-series forecasting, specifically with regards to adaptability to domain shift, edge forecasting, and data privacy. I have a particular interest in leveraging continual and federated learning for urban forecasting systems. While my research is primarily grounded in time-series, the methods I explore aim to inform broader seq2seq foundation model research. Here are some of my recent or ongoing projects:
+      <heading>Research Interests</heading>
+      <p style="margin-top:8px;">
+        I am broadly interested in <strong>probabilistic and tail-aware time-series forecasting</strong>:
+        developing methods that are not only accurate on average but remain reliable at distribution
+        tails and high-utility events. This connects naturally to <strong>forecast evaluation and
+        proper scoring rules</strong> — how we measure and compare probabilistic forecasts matters as
+        much as how we produce them. I am also interested in <strong>time-series foundation
+        models</strong>: their scaling behaviour, pretraining objectives, and evaluation protocols.
+        A recurring theme across my work is <strong>adaptation under domain shift</strong>: how
+        foundation models can be steered toward new data regimes without retraining from scratch.
       </p>
-
-      <div class="section" style="margin-top:12px;">
-        <heading>Decformer: A series-decomposition based approach to long-sequence time series forecasting</heading><br>
-        <b>Benjamin Redhead</b> — Master's Thesis
-      </div>
     </div>
 
-    <!-- Recent Events with MSRA photo (restored) -->
+    <!-- Publications -->
     <div class="section">
-      <div class="hero" style="grid-template-columns: 2fr 1fr;">
-        <div>
-          <heading>Recent Events</heading><br>
-          I was invited to Microsoft Research Asia to present our ConNST project, which attempted to use change-point detection to guide ensemble learning.
+      <heading>Publications</heading>
+      <div class="pub-row">
+        <div class="pub-thumb">
+          <img src="images/csig_teaser.webp" width="160" height="71" loading="lazy"
+               alt="Signature-Kernel paper teaser">
         </div>
-        <div class="photo-wrap">
-          <img class="profile-pic" src="images/MSRA.jpg" alt="Microsoft Research Asia Presentation">
+        <div class="pub-text">
+          <papertitle>Signature-Kernel Based Evaluation Metrics for Robust Probabilistic and Tail-Event Forecasting</papertitle><br>
+          <strong>Benjamin R. Redhead</strong>, Thomas L. Lee, Peng Gu, Víctor Elvira, Amos Storkey<br>
+          <em>Neural Information Processing Systems (NeurIPS)</em>, 2026<br>
+          <i style="font-size:14px;">An earlier version was presented at the
+            <a target="_blank" href="https://icml-structured-fm-workshop.github.io/">ICML 2026 Workshop on Foundation Models for Structured Data</a>,
+            Seoul.</i><br>
+          <span class="pub-links">
+            <a href="https://arxiv.org/abs/2602.10182" target="_blank">arXiv</a> /
+            <a href="https://github.com/BenjaminRedhead/CSigSuite" target="_blank">code</a> /
+            <a href="javascript:toggleblock('csig-bib')">bibtex</a>
+          </span>
+          <pre id="csig-bib" style="display:none;" class="bib">@inproceedings{redhead2026signature,
+  title     = {Signature-Kernel Based Evaluation Metrics for Robust Probabilistic and Tail-Event Forecasting},
+  author    = {Redhead, Benjamin R. and Lee, Thomas L. and Gu, Peng and Elvira, V{\'{i}}ctor and Storkey, Amos},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2026},
+  url       = {https://arxiv.org/abs/2602.10182}
+}</pre>
+          <p style="margin-top:6px;">Censored signature-kernel MMD metrics that stay strictly proper
+          while focusing evaluation on distribution tails and high-utility regions; benchmarks of
+          time-series foundation models show that capturing the overall distribution well doesn't
+          guarantee good tail forecasts.</p>
         </div>
+      </div>
+      <!-- FUTURE PREPRINT TEMPLATE (uncomment to add):
+      <div class="pub-row">
+        <div class="pub-thumb">
+          <img src="images/THUMBNAIL.webp" width="160" height="90" loading="lazy" alt="Paper teaser">
+        </div>
+        <div class="pub-text">
+          <papertitle>PAPER TITLE</papertitle><br>
+          AUTHORS<br>
+          <em>Preprint</em>, 2026<br>
+          <span class="pub-links">
+            <a href="https://arxiv.org/abs/ARXIV_ID" target="_blank">arXiv</a>
+          </span>
+        </div>
+      </div>
+      -->
+    </div>
+
+    <!-- Open Source -->
+    <div class="section">
+      <heading>Open Source</heading>
+      <div style="margin-top:8px;">
+        <a href="https://github.com/BenjaminRedhead/CSigSuite" target="_blank"><papertitle>ESK: Efficient Signature Kernel</papertitle></a><br>
+        Part of the <a href="https://github.com/BenjaminRedhead/CSigSuite" target="_blank">CSigSuite</a>
+        release. Batched signature-kernel MMD computation with custom Triton kernels; up to 3&times;
+        faster than the SigKernel library for batched loss calculations.
       </div>
     </div>
 
-    <!-- Footer + template credit (restored) -->
+    <!-- Footer -->
     <div class="section">
       <p style="text-align:right; margin:0;">
         <small>
@@ -299,14 +390,15 @@
         </small>
       </p>
     </div>
-  </div>
+
+  </div><!-- /.container -->
 
   <!-- Ripple theme toggle script (corner spread) -->
   <script>
     (function () {
-      const root   = document.documentElement;
-      const btn    = document.getElementById('theme-toggle');
-      const fader  = document.getElementById('theme-fader');
+      const root  = document.documentElement;
+      const btn   = document.getElementById('theme-toggle');
+      const fader = document.getElementById('theme-fader');
 
       function currentBg() {
         return getComputedStyle(root).getPropertyValue('--bg').trim() || '#fff';
@@ -317,29 +409,24 @@
         const cx = rect.left + rect.width / 2;
         const cy = rect.top  + rect.height / 2;
 
-        // 1) Set overlay to OLD theme color and fully cover the screen
         fader.style.transition = 'none';
         fader.style.background = currentBg();
-        const cover = '150vmax'; // sufficiently large to cover any viewport
+        const cover = '150vmax';
         const startPath = `circle(${cover} at ${cx}px ${cy}px)`;
         fader.style.clipPath = startPath;
         fader.style.webkitClipPath = startPath;
 
-        // Force reflow so the start state is committed
         void fader.offsetWidth;
 
-        // 2) Switch theme underneath
         root.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
 
-        // 3) Animate overlay shrinking to reveal the NEW theme
         const endPath = `circle(0px at ${cx}px ${cy}px)`;
         fader.style.transition = `clip-path var(--fade) ease, -webkit-clip-path var(--fade) ease`;
         fader.style.clipPath = endPath;
         fader.style.webkitClipPath = endPath;
       }
 
-      // Initial theme (saved or system)
       const saved = localStorage.getItem('theme');
       const start = (saved === 'light' || saved === 'dark')
         ? saved
@@ -354,15 +441,8 @@
     })();
   </script>
 
-  <!-- Your existing scripts (restored) -->
   <script type="text/javascript" src="js/hidebib.js"></script>
   <script xml:space="preserve" language="JavaScript">try{ hideallbibs && hideallbibs(); }catch(e){}</script>
   <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=ezbT827oXKh3ixSroa748SEWXLZGLHuq3PGXKUGyyyg&cl=ffffff&w=a"></script>
 </body>
 </html>
-
-
-
-
-
-
